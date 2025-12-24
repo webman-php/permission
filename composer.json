@@ -24,7 +24,7 @@
   "require": {
     "php": ">=8.0",
     "casbin/casbin": "~4.0",
-    "topthink/think-orm": "^3.0",
+    "topthink/think-orm": "^2.0.53 || ^3.0.0 || ^4.0.30 || dev-master",
     "php-di/php-di": "^7.0",
     "doctrine/annotations": "^2.0",
     "workerman/redis": "^2.0"

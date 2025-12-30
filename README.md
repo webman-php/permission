@@ -1,28 +1,65 @@
-<p align="center"><img width="260px" src="./workbunny-logo.png" alt="workbunny"></p>
+<p align="center">
+  <img width="260px" src="./workbunny-logo.png" alt="workbunny">
+</p>
 
-**<p align="center">🐇 An Authorization For Webman Plugin. 🐇</p>**
+<p align="center">
+  <strong>🐇 An Authorization Library for Webman Plugin 🐇</strong>
+</p>
 
-# <p align="center"> 🐇 Webman Authorization Plugin Base Casbin. 🐇</p>
+<h1 align="center">
+  🐇 Webman Authorization Plugin Based on Casbin 🐇
+</h1>
 
-[![Default](https://github.com/php-casbin/webman-permission/actions/workflows/default.yml/badge.svg?branch=main)](https://github.com/php-casbin/webman-permission/actions/workflows/default.yml)
-[![Latest Stable Version](https://poser.pugx.org/casbin/webman-permission/v/stable)](https://packagist.org/packages/casbin/webman-permission)
-[![Total Downloads](https://poser.pugx.org/casbin/webman-permission/downloads)](https://packagist.org/packages/casbin/webman-permission)
-[![License](https://poser.pugx.org/casbin/webman-permission/license)](https://packagist.org/packages/casbin/webman-permission)
+<p align="center">
+  <a href="https://github.com/php-casbin/webman-permission/actions/workflows/default.yml">
+    <img src="https://github.com/php-casbin/webman-permission/actions/workflows/default.yml/badge.svg?branch=main" alt="Build Status">
+  </a>
+  <a href="https://packagist.org/packages/casbin/webman-permission">
+    <img src="https://poser.pugx.org/casbin/webman-permission/v/stable" alt="Latest Stable Version">
+  </a>
+  <a href="https://packagist.org/packages/casbin/webman-permission">
+    <img src="https://poser.pugx.org/casbin/webman-permission/downloads" alt="Total Downloads">
+  </a>
+  <a href="https://packagist.org/packages/casbin/webman-permission">
+    <img src="https://poser.pugx.org/casbin/webman-permission/license" alt="License">
+  </a>
+</p>
 
-An authorization library that supports access control models like ACL, RBAC, ABAC for webman plugin
+> An authorization library that supports access control models like ACL, RBAC, ABAC for Webman plugin.
 
-# Install
+---
 
-Composer Install
-```sh
+## Table of Contents
+
+- [Installation](#installation)
+- [Configuration](#configuration)
+  - [Dependency Injection](#dependency-injection)
+  - [Database Configuration](#database-configuration)
+- [Usage](#usage)
+- [Multiple Driver Configuration](#multiple-driver-configuration)
+- [Tutorials](#tutorials)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [Credits](#credits)
+- [Troubleshooting](#troubleshooting)
+
+---
+
+## Installation
+
+Install the package via Composer:
+
+```bash
 composer require -W casbin/webman-permission
 ```
 
-# Use
+---
 
-## Dependency Injection configuration
+## Configuration
 
-Modify the `config/container.php` configuration to perform the following final contents:
+### Dependency Injection
+
+Modify the `config/container.php` configuration file as follows:
 
 ```php
 $builder = new \DI\ContainerBuilder();
@@ -31,118 +68,141 @@ $builder->useAutowiring(true);
 return $builder->build();
 ```
 
-## Database configuration
+### Database Configuration
 
-默认策略存储是使用的ThinkORM。
+By default, the policy storage uses **ThinkORM**.
 
-### 1、模型配置
+#### 1. Model Configuration
 
-默认使用ThinkORM。修改数据库 `thinkorm.php` 配置
+The default uses ThinkORM. Modify the database configuration in `config/thinkorm.php`.
 
-> 如使用laravel数据库，配置参考如下
-  - 修改数据库 `database.php` 配置
-  - 修改数据库 `permission.php` 的`adapter`适配器为laravel适配器
+> **Note:** If using Laravel database, configure as follows:
+> - Modify the database configuration in `config/database.php`
+> - Change the `adapter` in `config/plugin/casbin/webman-permission/permission.php` to the Laravel adapter
 
-### 2、创建 `casbin_rule` 数据表
+#### 2. Create `casbin_rule` Table
+
+Execute the following SQL to create the policy rules table:
+
 ```sql
 CREATE TABLE `casbin_rule` (
-	`id` BIGINT ( 20 ) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`ptype` VARCHAR ( 128 ) NOT NULL DEFAULT '',
-	`v0` VARCHAR ( 128 ) NOT NULL DEFAULT '',
-	`v1` VARCHAR ( 128 ) NOT NULL DEFAULT '',
-	`v2` VARCHAR ( 128 ) NOT NULL DEFAULT '',
-	`v3` VARCHAR ( 128 ) NOT NULL DEFAULT '',
-	`v4` VARCHAR ( 128 ) NOT NULL DEFAULT '',
-	`v5` VARCHAR ( 128 ) NOT NULL DEFAULT '',
-	PRIMARY KEY ( `id` ) USING BTREE,
-	KEY `idx_ptype` ( `ptype` ) USING BTREE,
-	KEY `idx_v0` ( `v0` ) USING BTREE,
-	KEY `idx_v1` ( `v1` ) USING BTREE,
-	KEY `idx_v2` ( `v2` ) USING BTREE,
-	KEY `idx_v3` ( `v3` ) USING BTREE,
-	KEY `idx_v4` ( `v4` ) USING BTREE,
-    KEY `idx_v5` ( `v5` ) USING BTREE 
-) ENGINE = INNODB CHARSET = utf8mb4 COMMENT = '策略规则表';
+    `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ptype` VARCHAR(128) NOT NULL DEFAULT '',
+    `v0` VARCHAR(128) NOT NULL DEFAULT '',
+    `v1` VARCHAR(128) NOT NULL DEFAULT '',
+    `v2` VARCHAR(128) NOT NULL DEFAULT '',
+    `v3` VARCHAR(128) NOT NULL DEFAULT '',
+    `v4` VARCHAR(128) NOT NULL DEFAULT '',
+    `v5` VARCHAR(128) NOT NULL DEFAULT '',
+    PRIMARY KEY (`id`) USING BTREE,
+    KEY `idx_ptype` (`ptype`) USING BTREE,
+    KEY `idx_v0` (`v0`) USING BTREE,
+    KEY `idx_v1` (`v1`) USING BTREE,
+    KEY `idx_v2` (`v2`) USING BTREE,
+    KEY `idx_v3` (`v3`) USING BTREE,
+    KEY `idx_v4` (`v4`) USING BTREE,
+    KEY `idx_v5` (`v5`) USING BTREE
+) ENGINE = INNODB CHARSET = utf8mb4 COMMENT = 'Casbin Policy Rules Table';
 ```
-### 3、配置 `config/redis` 配置
 
-### 4、重启webman
+#### 3. Configure Redis
 
-```
+Configure your Redis settings in `config/redis.php`.
+
+#### 4. Restart Webman
+
+```bash
+# Restart in foreground
 php start.php restart
-```
-或者
-```
+
+# Or restart in daemon mode
 php start.php restart -d
 ```
 
-# 使用
+---
 
-安装成功后，可以这样使用:
+## Usage
+
+After successful installation, you can use the library as follows:
+
+### Basic Operations
 
 ```php
 use Casbin\WebmanPermission\Permission;
 
-// adds permissions to a user
+// Add permissions to a user
 Permission::addPermissionForUser('eve', 'articles', 'read');
-// adds a role for a user.
+
+// Add a role for a user
 Permission::addRoleForUser('eve', 'writer');
-// adds permissions to a rule
-Permission::addPolicy('writer', 'articles','edit');
+
+// Add permissions to a role
+Permission::addPolicy('writer', 'articles', 'edit');
 ```
 
-你可以检查一个用户是否拥有某个权限:
+### Permission Check
 
 ```php
 if (\Casbin\WebmanPermission\Permission::enforce('eve', 'articles', 'edit')) {
-    echo '恭喜你！通过权限认证';
+    echo 'Congratulations! Permission granted.';
 } else {
-    echo '对不起，您没有该资源访问权限';
+    echo 'Sorry, you do not have access to this resource.';
 }
 ```
 
-# 多套驱动配置
+---
+
+## Multiple Driver Configuration
+
+You can use multiple driver configurations:
 
 ```php
 $permission = \Casbin\WebmanPermission\Permission::driver('restful_conf');
-// adds permissions to a user
-$permission->addPermissionForUser('eve', 'articles', 'read');
-// adds a role for a user.
-$permission->addRoleForUser('eve', 'writer');
-// adds permissions to a rule
-$permission->addPolicy('writer', 'articles','edit');
 
+// Add permissions to a user
+$permission->addPermissionForUser('eve', 'articles', 'read');
+
+// Add a role for a user
+$permission->addRoleForUser('eve', 'writer');
+
+// Add permissions to a role
+$permission->addPolicy('writer', 'articles', 'edit');
+
+// Check permissions
 if ($permission->enforce('eve', 'articles', 'edit')) {
-    echo '恭喜你！通过权限认证';
+    echo 'Congratulations! Permission granted.';
 } else {
-    echo '对不起，您没有该资源访问权限';
+    echo 'Sorry, you do not have access to this resource.';
 }
 ```
 
-更多 `API` 参考 [Casbin API](https://casbin.org/docs/en/management-api) 。
+For more API details, refer to the [Casbin API Documentation](https://casbin.org/docs/en/management-api).
 
-# 教程
-* [Casbin权限实战：入门分享(中文)](https://www.bilibili.com/video/BV1A541187M4/?vd_source=a9321be9ed112f8d6fdc8ee87640be1b)
-* [Casbin权限实战：基于角色的RBAC授权](https://www.bilibili.com/video/BV1A541187M4/?vd_source=a9321be9ed112f8d6fdc8ee87640be1b)
-* [Casbin权限实战：RESTful及中间件使用](https://www.bilibili.com/video/BV1uk4y117up/?vd_source=a9321be9ed112f8d6fdc8ee87640be1b)
-* [Casbin权限实战：如何使用自定义匹配函数](https://www.bilibili.com/video/BV1dq4y1Z78g/?vd_source=a9321be9ed112f8d6fdc8ee87640be1b)
-* [Webman实战教程：如何使用casbin权限控制](https://www.bilibili.com/video/BV1X34y1Q7ZH/?vd_source=a9321be9ed112f8d6fdc8ee87640be1b)
+---
 
-# 测试
+## Tutorials
 
-## 测试套件
+* [Casbin Permission Practice: Getting Started (Chinese)](https://www.bilibili.com/video/BV1A541187M4/?vd_source=a9321be9ed112f8d6fdc8ee87640be1b)
+* [Casbin Permission Practice: RBAC Authorization Based on Roles (Chinese)](https://www.bilibili.com/video/BV1A541187M4/?vd_source=a9321be9ed112f8d6fdc8ee87640be1b)
+* [Casbin Permission Practice: RESTful and Middleware Usage (Chinese)](https://www.bilibili.com/video/BV1uk4y117up/?vd_source=a9321be9ed112f8d6fdc8ee87640be1b)
+* [Casbin Permission Practice: Using Custom Matching Functions (Chinese)](https://www.bilibili.com/video/BV1dq4y1Z78g/?vd_source=a9321be9ed112f8d6fdc8ee87640be1b)
+* [Webman Practice Tutorial: Using Casbin Permission Control (Chinese)](https://www.bilibili.com/video/BV1X34y1Q7ZH/?vd_source=a9321be9ed112f8d6fdc8ee87640be1b)
 
-本项目包含完整的单元测试套件，覆盖了以下方面：
+---
 
-### 测试文件结构
+## Testing
+
+This project includes a comprehensive unit test suite covering the following aspects:
+
+### Test File Structure
 
 ```
 tests/
-├── Adapter.php                    # 适配器基础测试
-├── PermissionTest.php            # Permission类测试
-├── AdapterTest.php                # 适配器详细测试
-├── EdgeCaseTest.php              # 边界情况测试
-├── IntegrationTest.php            # 集成测试
+├── Adapter.php                    # Basic adapter tests
+├── PermissionTest.php            # Permission class tests
+├── AdapterTest.php               # Detailed adapter tests
+├── EdgeCaseTest.php              # Edge case tests
+├── IntegrationTest.php           # Integration tests
 ├── LaravelDatabase/
 │   ├── LaravelDatabaseAdapterTest.php
 │   └── TestCase.php
@@ -156,115 +216,128 @@ tests/
                 └── permission.php
 ```
 
-### 测试覆盖范围
+### Test Coverage
 
-1. **基础功能测试**
-   - 权限添加、删除、检查
-   - 角色分配、移除
-   - 策略管理
+1. **Basic Functionality**
+   - Permission add, remove, check
+   - Role assignment, removal
+   - Policy management
 
-2. **适配器测试**
-   - 数据库操作
-   - 过滤器功能
-   - 批量操作
-   - 事务处理
+2. **Adapter Tests**
+   - Database operations
+   - Filter functionality
+   - Batch operations
+   - Transaction handling
 
-3. **边界情况测试**
-   - 空值处理
-   - 特殊字符
-   - 大数据量
-   - 性能测试
+3. **Edge Cases**
+   - Null value handling
+   - Special characters
+   - Large data volumes
+   - Performance testing
 
-4. **集成测试**
-   - RBAC完整流程
-   - 域权限控制
-   - 多驱动支持
-   - 复杂业务场景
+4. **Integration Tests**
+   - Complete RBAC workflow
+   - Domain permission control
+   - Multi-driver support
+   - Complex business scenarios
 
-5. **错误处理测试**
-   - 异常情况
-   - 无效输入
-   - 并发访问
+5. **Error Handling**
+   - Exception scenarios
+   - Invalid input
+   - Concurrent access
 
-### 运行测试
+### Running Tests
 
 ```bash
-# 运行所有测试
+# Run all tests
 php vendor/bin/phpunit tests/
 
-# 运行特定测试文件
+# Run specific test file
 php vendor/bin/phpunit tests/PermissionTest.php
 
-# 运行特定测试方法
+# Run specific test method
 php vendor/bin/phpunit --filter testAddPermissionForUser tests/PermissionTest.php
 
-# 生成测试覆盖率报告
+# Generate coverage report
 php vendor/bin/phpunit --coverage-html coverage tests/
 ```
 
-### 测试要求
+### Requirements
 
 - PHP >= 8.1
 - PHPUnit >= 9.0
-- 数据库连接
-- Redis连接
+- Database connection
+- Redis connection
 
-### 测试环境配置
+### Test Environment
 
-测试环境会自动创建以下数据表：
-- `casbin_rule` - 默认策略表
-- `other_casbin_rule` - 其他驱动策略表
+The test environment automatically creates the following tables:
+- `casbin_rule` - Default policy table
+- `other_casbin_rule` - Other driver policy table
 
-### 测试最佳实践
+### Best Practices
 
-1. **编写新测试**
-   - 继承适当的测试基类
-   - 遵循命名约定
-   - 添加必要的断言
+1. **Writing New Tests**
+   - Inherit from appropriate test base classes
+   - Follow naming conventions
+   - Add necessary assertions
 
-2. **测试数据管理**
-   - 使用 `setUp()` 和 `tearDown()` 方法
-   - 确保测试数据隔离
-   - 清理测试数据
+2. **Test Data Management**
+   - Use `setUp()` and `tearDown()` methods
+   - Ensure test data isolation
+   - Clean up test data
 
-3. **测试覆盖**
-   - 覆盖正常流程
-   - 测试异常情况
-   - 验证边界条件
+3. **Test Coverage**
+   - Cover normal workflows
+   - Test exception scenarios
+   - Verify boundary conditions
 
-## 贡献指南
+---
 
-### 添加新功能测试
+## Contributing
 
-1. 为新功能编写对应的测试用例
-2. 确保测试覆盖率达到要求
-3. 运行完整测试套件
-4. 提交代码前检查测试状态
+### Adding New Features
 
-### 修复Bug测试
+1. Write corresponding test cases for new features
+2. Ensure test coverage meets requirements
+3. Run the complete test suite
+4. Check test status before submitting code
 
-1. 为Bug编写重现测试
-2. 修复Bug后验证测试通过
-3. 确保不影响现有功能
+### Bug Fixes
 
-# 感谢
+1. Write reproduction tests for bugs
+2. Verify tests pass after fixing bugs
+3. Ensure existing functionality is not affected
 
-[Casbin](https://github.com/php-casbin/php-casbin)，你可以查看全部文档在其 [官网](https://casbin.org/) 上。
+---
+
+## Credits
+
+Built on top of [Casbin](https://github.com/php-casbin/php-casbin). For full documentation, visit the [official website](https://casbin.org/).
+
+---
+
+## Advanced Configuration
 
 <details>
-	
-<summary> 解除 https://github.com/PHP-DI/PHP-DI依赖的解决方案（不推荐）</summary>
 
-1、卸载DI依赖包：`composer remove php-di/php-di`
+<summary>Removing PHP-DI Dependency (Not Recommended)</summary>
 
-2、修改：`Casbin\WebmanPermission\Permission` 文件
+1. Uninstall the DI dependency package:
+```bash
+composer remove php-di/php-di
+```
 
+2. Modify the `Casbin\WebmanPermission\Permission` file:
+
+Replace:
 ```php
 if (is_null(static::$_manager)) {
-    static::$_manager = new Enforcer($model, Container::get($config['adapter']),false);
+    static::$_manager = new Enforcer($model, Container::get($config['adapter']), false);
 }
 ```
-替换为
+
+With:
 ```php
 if (is_null(static::$_manager)) {
     if ($config['adapter'] == DatabaseAdapter::class) {
@@ -272,13 +345,26 @@ if (is_null(static::$_manager)) {
     } elseif ($config['adapter'] == LaravelDatabaseAdapter::class) {
         $_model = new LaravelRuleModel();
     }
-    static::$_manager = new Enforcer($model,  new $config['adapter']($_model), false);
+    static::$_manager = new Enforcer($model, new $config['adapter']($_model), false);
 }
 ```
-耦合太高，不建议这么搞，更多了解：https://www.workerman.net/doc/webman/di.html
+
+> **Warning:** This approach has high coupling and is not recommended. For more information, visit: https://www.workerman.net/doc/webman/di.html
+
 </details>
 
-## 问题
+---
 
-* Laravel的驱动报错：`Call to a member function connection() on null|webman2.1/vendor/illuminate/database/Eloquent/Model.
-  php|1918`。解决方案，请检查本地数据库代理是否正常，如使用了Docker容器主机地址`dnmp-mysql`可能会导致该问题出现。 
+## Troubleshooting
+
+### Laravel Driver Error
+
+**Error:** `Call to a member function connection() on null`
+
+**Solution:** Check if your local database proxy is working correctly. Using Docker container host addresses like `dnmp-mysql` may cause this issue.
+
+---
+
+## License
+
+[MIT License](LICENSE) 
